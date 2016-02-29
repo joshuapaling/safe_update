@@ -1,8 +1,4 @@
 #!/usr/bin/env ruby
 
 require_relative "../lib/safe_update"
-
-puts 'Updating...'
 SafeUpdate::Updater.new.run
-
-puts 'Finished updating.'

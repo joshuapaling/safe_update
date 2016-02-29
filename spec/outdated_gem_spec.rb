@@ -17,4 +17,12 @@ describe SafeUpdate::OutdatedGem do
     expect(the_gem.installed).to eq('3.4.0')
     expect(the_gem.requested).to eq('~> 3.4')
   end
+
+  it 'raises error on unexpected lines' do
+    # Unknown switches '--parseable'
+    # is what you'll get for `bundle update --parseable`
+    # on earlier versions
+
+    expect { SafeUpdate::OutdatedGem.new('bundle update --parseable') }.to raise_error(RuntimeError)
+  end
 end

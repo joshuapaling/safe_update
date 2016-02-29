@@ -1,28 +1,65 @@
 # SafeUpdate
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/safe_update`. To experiment with that code, run `bin/console` for an interactive prompt.
+This automates the tedious but important process of updating your gems, one at a time.
 
-TODO: Delete this and the text above, and describe your gem
+When I first started ruby, I was told 'Never run `bundle update`'. The reality is, we should be keeping our gems as up to date as possible - but `bundle update` just isn't a great way to do it. It does everything in one hit, and it's hard to figure out the cause when things go wrong.
+
+This gem does `bundle update` in a safer way. It takes the output of `bundle outdated`, and, for each outdated gem, it:
+
+- runs `bundle update <gem_name>`
+- commits to git with the message: `ran: bundle update <gem_name>`
+
+Once you've got each gem updated, with one commit per gem, you can run your tests, and check everything is working. If something is broken, you can use `git bisect` to easily figure out the problem gem.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'safe_update'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
     $ gem install safe_update
+
+And then, from your project's root directory, execute:
+
+    $ safe_update
+
+Since this gem is not a dependency of your application, per se, there's no need to add it to your gemfile.
 
 ## Usage
 
-TODO: Write usage instructions here
+1. `cd /path/to/project`
+2. `safe_update`
+3. Watch your gems get updated and committed, one at a time. The output looks like this:
+
+```
+(... more goes here)
+-------------
+OUTDATED GEM: sprockets-rails
+   Newest: 3.0.3.
+Installed: 3.0.0.
+Running `bundle update sprockets-rails`...
+committing changes (message: 'bundle update sprockets-rails')...
+-------------
+OUTDATED GEM: unf_ext
+   Newest: 0.0.7.2.
+Installed: 0.0.7.1.
+Running `bundle update unf_ext`...
+committing changes (message: 'bundle update unf_ext')...
+-------------
+OUTDATED GEM: uniform_notifier
+   Newest: 1.10.0.
+Installed: 1.9.0.
+Running `bundle update uniform_notifier`...
+committing changes (message: 'bundle update uniform_notifier')...
+-------------
+-------------
+FINISHED
+```
+
+## Future
+
+I've knocked this up really quickly, and it's pretty MVP-ish. Ideas for future include:
+
+- run your tests each update, and don't update problem gems
+- specify what update sizes you want to apply (major, minor, patch)
+- summary of what's happened at the end (eg. 2 major updates ignored, 5 minor updates applied, etc)
+- other ideas? Open an issue.
 
 ## Development
 
@@ -32,7 +69,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/safe_update.
+Bug reports and pull requests are welcome on GitHub at https://github.com/joshuapaling/safe_update.
 
 
 ## License
