@@ -56,9 +56,9 @@ FINISHED
 
 I've knocked this up really quickly, and it's pretty MVP-ish. Ideas for future include:
 
-- run your tests each update, and don't update problem gems
-- specify what update sizes you want to apply (major, minor, patch)
-- summary of what's happened at the end (eg. 2 major updates ignored, 5 minor updates applied, etc)
+- run your tests each update, and don't update problem gems.
+- specify what update sizes you want to apply (major, minor, patch); for now you need to rely on the [Gemfile version specifiers](http://bundler.io/gemfile.html).
+- summary of what's happened at the end (eg. 2 major updates ignored, 5 minor updates applied, etc).
 - other ideas? Open an issue.
 
 ## Development
