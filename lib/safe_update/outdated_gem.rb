@@ -7,7 +7,9 @@ module SafeUpdate
     # or. react-rails (newest 1.6.0, installed 1.5.0)
     def initialize(line)
       @line = line
-      raise "Unexpected output from `bundle outdated --parseable`: #{@line}" unless name.to_s.length > 0
+      if name.to_s.empty?
+        fail "Unexpected output from `bundle outdated --parseable`: #{@line}"
+      end
     end
 
     def update
@@ -16,10 +18,10 @@ module SafeUpdate
       puts "   Newest: #{newest}. "
       puts "Installed: #{installed}."
       puts "Running `bundle update #{name}`..."
-      %x(bundle update #{name})
+      `bundle update #{name}`
       puts "committing changes (message: '#{commit_message}')..."
-      %x(git add Gemfile.lock)
-      %x(git commit -m '#{commit_message}')
+      `git add Gemfile.lock`
+      `git commit -m '#{commit_message}'`
     end
 
     def name

@@ -5,9 +5,9 @@
 lib = File.expand_path('../../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
-require "safe_update/version"
-require "safe_update/updater"
-require "safe_update/outdated_gem"
+require 'safe_update/version'
+require 'safe_update/updater'
+require 'safe_update/outdated_gem'
 
 module SafeUpdate
 end
