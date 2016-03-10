@@ -18,7 +18,7 @@ module SafeUpdate
       puts "Running `bundle update #{name}`..."
       %x(bundle update #{name})
       puts "committing changes (message: '#{commit_message}')..."
-      %x(git add -A)
+      %x(git add Gemfile.lock)
       %x(git commit -m '#{commit_message}')
     end
 
@@ -45,7 +45,7 @@ module SafeUpdate
     private
 
     def commit_message
-      "ran: bundle update #{name}"
+      "update gem: #{name}"
     end
 
     # returns the section of string that resides between marker1 and marker2

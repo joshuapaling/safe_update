@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe SafeUpdate::OutdatedGem do
-
   it 'parses gem name correctly' do
     the_gem = SafeUpdate::OutdatedGem.new('poltergeist (newest 1.9.0, installed 1.8.1)')
     expect(the_gem.name).to eq('poltergeist')
