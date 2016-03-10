@@ -7,7 +7,7 @@ When I first started ruby, I was told 'Never run `bundle update`'. The reality i
 This gem does `bundle update` in a safer way. It takes the output of `bundle outdated`, and, for each outdated gem, it:
 
 - runs `bundle update <gem_name>`
-- commits to git with the message: `ran: bundle update <gem_name>`
+- commits to git with the message: `update gem: <gem_name>`
 
 Once you've got each gem updated, with one commit per gem, you can run your tests, and check everything is working. If something is broken, you can use `git bisect` to easily figure out the problem gem.
 
