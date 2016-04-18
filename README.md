@@ -36,12 +36,6 @@ Installed: 3.0.0.
 Running `bundle update sprockets-rails`...
 committing changes (message: 'bundle update sprockets-rails')...
 -------------
-OUTDATED GEM: unf_ext
-   Newest: 0.0.7.2.
-Installed: 0.0.7.1.
-Running `bundle update unf_ext`...
-committing changes (message: 'bundle update unf_ext')...
--------------
 OUTDATED GEM: uniform_notifier
    Newest: 1.10.0.
 Installed: 1.9.0.
@@ -50,6 +44,16 @@ committing changes (message: 'bundle update uniform_notifier')...
 -------------
 -------------
 FINISHED
+```
+
+### Options
+
+Run `safe_update -h` to view all options:
+
+```
+Usage: safe_update [options]
+    -v, --version                    Show version
+    -p, --push N                     git push every N commits
 ```
 
 ## Future
