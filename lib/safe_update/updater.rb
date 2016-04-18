@@ -1,18 +1,28 @@
 module SafeUpdate
   class Updater
-    def run
+    def run(options = {})
+      options[:push] = options[:push].to_i if options[:push]
       check_for_staged_changes
       check_for_gemfile_lock_changes
       output_array = bundle_outdated_parseable.split(/\n+/)
-      output_array.each do |line|
-        OutdatedGem.new(line).update
+      output_array.to_enum.with_index(1) do |line, index|
+        update_gem(line)
+        `git push` if options[:push] && index % options[:push] == 0
       end
+
+      # run it once at the very end, so the final commit can be tested in CI
+      `git push` if options[:push]
+
       puts '-------------'
       puts '-------------'
       puts 'FINISHED'
     end
 
     private
+
+    def update_gem(line)
+      OutdatedGem.new(line).update
+    end
 
     def bundle_outdated_parseable
       output = `bundle outdated --parseable`

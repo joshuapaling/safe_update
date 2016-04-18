@@ -1,4 +1,21 @@
 #!/usr/bin/env ruby
 
-require_relative "../lib/safe_update"
-SafeUpdate::Updater.new.run
+require 'optparse'
+require_relative '../lib/safe_update'
+options = {}
+OptionParser.new do |opts|
+  opts.banner = 'Usage: safe_update [options]'
+
+  opts.on('-v', '--version', 'Show version') do |v|
+    options[:version] = v
+  end
+  opts.on('-p', '--push N', 'git push every N commits') do |p|
+    options[:push] = p
+  end
+end.parse!
+
+if options[:version]
+  puts "safe_update version #{SafeUpdate::VERSION}"
+else
+  SafeUpdate::Updater.new.run(options)
+end
