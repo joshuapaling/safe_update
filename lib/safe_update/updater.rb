@@ -1,17 +1,17 @@
 module SafeUpdate
   class Updater
-    def run(options = {})
-      options[:push] = options[:push].to_i if options[:push]
+    def run(push: nil)
+      push = push.to_i if push
       check_for_staged_changes
       check_for_gemfile_lock_changes
       output_array = bundle_outdated_parseable.split(/\n+/)
       output_array.to_enum.with_index(1) do |line, index|
         update_gem(line)
-        `git push` if options[:push] && index % options[:push] == 0
+        `git push` if push && index % push == 0
       end
 
       # run it once at the very end, so the final commit can be tested in CI
-      `git push` if options[:push]
+      `git push` if push
 
       puts '-------------'
       puts '-------------'
