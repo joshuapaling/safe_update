@@ -56,6 +56,24 @@ Usage: safe_update [options]
     -p, --push N                     git push every N commits
 ```
 
+### Recommended workflow
+
+**Step 1**
+
+Checkout a new branch and run safe-update, pushing every commit so your CI builds can run:
+
+```
+git checkout -b run-safe_update && git push -u origin run-safe_update && safe_update -p 1
+```
+
+**Step 2**
+
+Once everything is good, merge the branch back into master and delete the branch:
+
+```
+git checkout master && git merge run-safe_update && git branch -d run-safe_update && git push origin --delete run-safe_update
+```
+
 ## Future
 
 I've knocked this up really quickly, and it's pretty MVP-ish. Ideas for future include:
