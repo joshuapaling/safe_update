@@ -12,7 +12,7 @@ module SafeUpdate
       end
     end
 
-    def update
+    def attempt_update(test_command = nil)
       puts '-------------'
       puts "OUTDATED GEM: #{name}"
       puts "   Newest: #{newest}. "
@@ -21,10 +21,23 @@ module SafeUpdate
 
       `bundle update #{name}`
 
-      puts "committing changes (message: '#{commit_message}')..."
+      if test_command
+        tests_passed = `#{test_command}`
+      else
+        # if we're not running tests, just pretend they ran
+        # and passed
+        tests_passed = true
+      end
 
-      `git add Gemfile.lock`
-      `git commit -m '#{commit_message}'`
+      if tests_passed
+        puts "committing changes (message: '#{commit_message}')..."
+
+        `git add Gemfile.lock`
+        `git commit -m '#{commit_message}'`
+      else
+        puts "tests failed - this gem won't be updated"
+        `git reset HEAD --hard`
+      end
     end
 
     def name

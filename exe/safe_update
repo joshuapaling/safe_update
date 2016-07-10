@@ -9,8 +9,13 @@ OptionParser.new do |opts|
   opts.on('-v', '--version', 'Show version') do |v|
     options[:version] = v
   end
+
   opts.on('-p', '--push N', 'git push every N commits (so your CI can test changes as you go)') do |p|
     options[:push] = p
+  end
+
+  opts.on('-t', '--test COMMAND', "Run tests after each commit. Don't update gems which break tests.") do |test_command|
+    options[:test_command] = test_command
   end
 end.parse!
 

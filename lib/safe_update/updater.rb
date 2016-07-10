@@ -1,15 +1,20 @@
 module SafeUpdate
   class Updater
-    # push: If push is eg. 3, we will run `git push` every 3 commits.
-    #       If push is nil, we will never run git push.
-    def run(push: nil)
-      run_git_push = (push && push > 0) ? true : false
+    # push:
+    #   If push is eg. 3, we will run `git push` every 3 commits.
+    #   If push is nil, we will never run git push.
+    # test_command:
+    #   Command to run your tests after each gem update.
+    #   If exit status is non-zero, the gem will not be updated.
+    def run(push: nil, test_command: nil)
+      run_git_push = (push && push.to_i > 0) ? true : false
       push_interval = push.to_i if run_git_push
+
       check_for_staged_changes
       check_for_gemfile_lock_changes
 
       outdated_gems.to_enum.with_index(1) do |outdated_gem, index|
-        outdated_gem.update
+        outdated_gem.attempt_update(test_command)
         `git push` if run_git_push && index % push_interval == 0
       end
 

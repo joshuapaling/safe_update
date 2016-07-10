@@ -27,4 +27,23 @@ describe SafeUpdate::OutdatedGem do
     expect { SafeUpdate::OutdatedGem.new('bundle update --parseable') }
       .to raise_error(RuntimeError)
   end
+
+  describe '#attempt_update' do
+    it 'does not run tests if not asked' do
+      line = 'rspec-rails (newest 3.4.2, installed 3.4.0, requested ~> 3.4)'
+      the_gem = SafeUpdate::OutdatedGem.new(line)
+      expect(the_gem).not_to receive(:`).with('rspec')
+      the_gem.attempt_update
+    end
+
+    it 'runs tests if asked' do
+      line = 'rspec-rails (newest 3.4.2, installed 3.4.0, requested ~> 3.4)'
+      the_gem = SafeUpdate::OutdatedGem.new(line)
+      expect(the_gem).to receive(:`).with('bundle update rspec-rails').exactly(1).times
+      expect(the_gem).to receive(:`).with('rspec').exactly(1).times.and_return(true)
+      expect(the_gem).to receive(:`).with('git add Gemfile.lock')
+      expect(the_gem).to receive(:`).with("git commit -m 'update gem: rspec-rails'")
+      the_gem.attempt_update('rspec')
+    end
+  end
 end
