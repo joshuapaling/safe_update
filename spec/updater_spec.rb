@@ -29,7 +29,8 @@ describe SafeUpdate::Updater do
     allow(updater).to receive(:check_for_staged_changes)
     allow(updater).to receive(:check_for_gemfile_lock_changes)
     allow(updater).to receive(:bundle_outdated_parseable).and_return("1\n2\n3\n4\n5\n")
-    allow(updater).to receive(:update_gem)
+    SafeUpdate::OutdatedGem.any_instance.stub(:initialize).and_return(true)
+    SafeUpdate::OutdatedGem.any_instance.stub(:attempt_update).and_return(true)
     # expect git push 3 times - twice at lines 2 and 4 (based on telling
     # it to push every 2 commits), then once after
     # all lines are finished, at the very end

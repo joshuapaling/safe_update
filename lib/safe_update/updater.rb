@@ -1,27 +1,34 @@
 module SafeUpdate
   class Updater
+    # push: If push is eg. 3, we will run `git push` every 3 commits.
+    #       If push is nil, we will never run git push.
     def run(push: nil)
-      push = push.to_i if push
+      run_git_push = (push && push > 0) ? true : false
+      push_interval = push.to_i if run_git_push
       check_for_staged_changes
       check_for_gemfile_lock_changes
-      output_array = bundle_outdated_parseable.split(/\n+/)
-      output_array.to_enum.with_index(1) do |line, index|
-        update_gem(line)
-        `git push` if push && index % push == 0
+
+      outdated_gems.to_enum.with_index(1) do |outdated_gem, index|
+        outdated_gem.update
+        `git push` if run_git_push && index % push_interval == 0
       end
 
       # run it once at the very end, so the final commit can be tested in CI
-      `git push` if push
+      `git push` if run_git_push
 
-      puts '-------------'
-      puts '-------------'
-      puts 'FINISHED'
+      display_finished_message
     end
 
     private
 
-    def update_gem(line)
-      OutdatedGem.new(line).update
+    def outdated_gems
+      return @outdated_gems if @outdated_gems
+
+      @outdated_gems = []
+      bundle_outdated_parseable.split(/\n+/).each do |line|
+        @outdated_gems << OutdatedGem.new(line)
+      end
+      return @outdated_gems
     end
 
     def bundle_outdated_parseable
@@ -53,6 +60,12 @@ module SafeUpdate
         puts 'Please commit or stash your changes before running safe_update'
         exit 1
       end
+    end
+
+    def display_finished_message
+      puts '-------------'
+      puts '-------------'
+      puts 'FINISHED'
     end
   end
 end

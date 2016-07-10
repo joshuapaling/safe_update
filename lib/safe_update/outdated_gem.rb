@@ -18,8 +18,11 @@ module SafeUpdate
       puts "   Newest: #{newest}. "
       puts "Installed: #{installed}."
       puts "Running `bundle update #{name}`..."
+
       `bundle update #{name}`
+
       puts "committing changes (message: '#{commit_message}')..."
+
       `git add Gemfile.lock`
       `git commit -m '#{commit_message}'`
     end
