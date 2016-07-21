@@ -5,8 +5,9 @@ module SafeUpdate
     # line is a line from bundle outdated --parseable
     # eg. react-rails (newest 1.6.0, installed 1.5.0, requested ~> 1.0)
     # or. react-rails (newest 1.6.0, installed 1.5.0)
-    def initialize(line)
+    def initialize(line, git_repo = nil)
       @line = line
+      @git_repo = git_repo || GitRepo.new
       if name.to_s.empty?
         fail "Unexpected output from `bundle outdated --parseable`: #{@line}"
       end
@@ -21,23 +22,15 @@ module SafeUpdate
 
       `bundle update #{name}`
 
-      if test_command
-        tests_passed = `#{test_command}`
-      else
-        # if we're not running tests, just pretend they ran
-        # and passed
-        tests_passed = true
-      end
-
-      if tests_passed
-        puts "committing changes (message: '#{commit_message}')..."
-
-        `git add Gemfile.lock`
-        `git commit -m '#{commit_message}'`
-      else
+      # if we've been asked to run tests, and the tests fail
+      if test_command && (system(test_command) == false)
         puts "tests failed - this gem won't be updated"
-        `git reset HEAD --hard`
+        @git_repo.discard_local_changes
+        return
       end
+
+      puts "committing changes (message: '#{commit_message}')..."
+      @git_repo.commit_gemfile_lock(commit_message)
     end
 
     def name

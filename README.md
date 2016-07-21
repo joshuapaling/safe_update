@@ -52,8 +52,9 @@ Run `safe_update -h` to view all options:
 
 ```
 Usage: safe_update [options]
-    -v, --version                    Show version
-    -p, --push N                     git push every N commits
+    -v, --version        Show version
+    -p, --push N         git push every N commits (so your CI can test changes as you go)
+    -t, --test COMMAND   Run tests after each commit. Don't update gems which break tests.
 ```
 
 ### Recommended workflow
