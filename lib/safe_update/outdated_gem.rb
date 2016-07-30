@@ -22,11 +22,14 @@ module SafeUpdate
 
       `bundle update #{name}`
 
-      # if we've been asked to run tests, and the tests fail
-      if test_command && (system(test_command) == false)
-        puts "tests failed - this gem won't be updated"
-        @git_repo.discard_local_changes
-        return
+      if test_command
+        puts "Running tests with: #{test_command}"
+        result = system(test_command)
+        if result != true
+          puts "tests failed - this gem won't be updated (test result: #{$?.to_i})"
+          @git_repo.discard_local_changes
+          return
+        end
       end
 
       puts "committing changes (message: '#{commit_message}')..."

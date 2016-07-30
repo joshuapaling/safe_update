@@ -14,6 +14,7 @@ module SafeUpdate
       run_git_push = (push && push.to_i > 0) ? true : false
       push_interval = push.to_i if run_git_push
 
+      puts 'Finding outdated gems...'
       outdated_gems.to_enum.with_index(1) do |outdated_gem, index|
         outdated_gem.attempt_update(test_command)
         @git_repo.push if run_git_push && index % push_interval == 0
