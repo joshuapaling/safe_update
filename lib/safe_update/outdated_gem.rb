@@ -22,6 +22,13 @@ module SafeUpdate
 
       `bundle update #{name}`
 
+      # sometimes the gem may be outdated, but it's matching the
+      # version required by the gemfile, so bundle update does nothing
+      # in which case, don't waste time on tests etc.
+      if false
+        return
+      end
+
       if test_command
         puts "Running tests with: #{test_command}"
         result = system(test_command)
