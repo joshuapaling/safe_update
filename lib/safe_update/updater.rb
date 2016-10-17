@@ -29,26 +29,7 @@ module SafeUpdate
     private
 
     def outdated_gems
-      return @outdated_gems if @outdated_gems
-
-      @outdated_gems = []
-      bundle_outdated_parseable.split(/\n+/).each do |line|
-        @outdated_gems << OutdatedGem.new(line, @git_repo)
-      end
-      return @outdated_gems
-    end
-
-    def bundle_outdated_parseable
-      output = `bundle outdated --parseable`
-      if output.strip == "Unknown switches '--parseable'"
-        # pre-1.12.0 version of bundler
-        output = `bundle outdated`
-        output.gsub!(/(\n|.)*Outdated gems included in the bundle:/, '')
-        output.gsub!(/  \* /, '')
-        output.gsub!(/ in group.*/, '')
-      end
-
-      output.strip
+      BundleOutdatedParser.new.call
     end
 
     def display_finished_message
