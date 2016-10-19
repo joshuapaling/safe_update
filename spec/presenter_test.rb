@@ -5,7 +5,7 @@ require 'safe_update'
 
 outdated_gems = []
 outdated_gems << SafeUpdate::OutdatedGem.new(
-  gem_name: 'rails',
+  gem_name: 'reform-rails',
   newest: '1.2.3',
   installed: '1.2.1',
   requested: '~> 1.2.0',

@@ -67,7 +67,7 @@ module SafeUpdate
 
     def header
       return [
-        fixed_length_string('GEM', 10),
+        fixed_length_string('GEM', 15),
         fixed_length_string('INSTALLED', 10),
         fixed_length_string('REQUESTED', 10),
         fixed_length_string('NEWEST', 7),
@@ -79,7 +79,7 @@ module SafeUpdate
       status = outdated_gem.current_status
       status += ' ' + current_spinner_state if outdated_gem.being_operated_on_now?
       return [
-        fixed_length_string(outdated_gem.gem_name, 10),
+        fixed_length_string(outdated_gem.gem_name, 15),
         fixed_length_string(outdated_gem.installed, 10),
         fixed_length_string(outdated_gem.requested || '    -', 10),
         fixed_length_string(outdated_gem.newest, 7),
