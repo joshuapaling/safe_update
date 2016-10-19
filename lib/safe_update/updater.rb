@@ -15,7 +15,7 @@ module SafeUpdate
       push_interval = push.to_i if run_git_push
 
       puts 'Finding outdated gems...'
-      outdated_gems = BundleOutdatedParser.new.call
+      outdated_gems = get_outdated_gems
 
       presenter = SafeUpdate::Presenter.new
       Thread.new { presenter.call(outdated_gems) }
@@ -29,6 +29,12 @@ module SafeUpdate
       @git_repo.push if run_git_push
 
       presenter.stop
+    end
+
+    private
+
+    def get_outdated_gems
+      @outdated_gems ||= BundleOutdatedParser.new.call
     end
   end
 end

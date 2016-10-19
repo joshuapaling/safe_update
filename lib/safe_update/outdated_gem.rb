@@ -38,7 +38,12 @@ module SafeUpdate
         end
       end
 
-      @git_repo.commit_gemfile_lock(commit_message)
+      if @git_repo.gemfile_lock_has_changes?
+        @git_repo.commit_gemfile_lock(commit_message)
+        @current_status = STATUS_UPDATED
+      else
+        @current_status = STATUS_UNCHANGED
+      end
     end
 
     private

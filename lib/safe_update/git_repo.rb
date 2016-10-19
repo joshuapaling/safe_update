@@ -7,7 +7,9 @@ module SafeUpdate
   class GitRepo
     def perform_safety_checks
       check_for_staged_changes
-      check_for_gemfile_lock_changes
+      if gemfile_lock_has_changes?
+        raise 'safe_update cannot run while there are uncommitted changes in Gemfile.lock'
+      end
     end
 
     def discard_local_changes
@@ -23,6 +25,11 @@ module SafeUpdate
       `git push`
     end
 
+    def gemfile_lock_has_changes?
+      result = `git diff --name-only`
+      return result.include? 'Gemfile.lock'
+    end
+
     private
 
     def check_for_staged_changes
@@ -31,13 +38,5 @@ module SafeUpdate
         raise 'safe_update cannot run while git repo has staged changes'
       end
     end
-
-    def check_for_gemfile_lock_changes
-      result = `git diff --name-only`
-      if result.include? 'Gemfile.lock'
-        raise 'safe_update cannot run while there are uncommitted changes in Gemfile.lock'
-      end
-    end
-
   end
 end
