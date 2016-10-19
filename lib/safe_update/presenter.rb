@@ -1,8 +1,5 @@
 require 'curses'
 
-Curses.noecho
-Curses.init_screen
-
 module SafeUpdate
   class Presenter
     # outdated_gems is an array of instances of SafeUpdate::OutdatedGem
@@ -10,6 +7,9 @@ module SafeUpdate
     SPINNER_STATES = ['|', '/', '-', '\\']
 
     def initialize
+      Curses.noecho
+      Curses.init_screen
+
       @tick = 1
       @running = true
     end
