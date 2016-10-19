@@ -1,21 +1,24 @@
 module SafeUpdate
   class OutdatedGem
-    attr_reader :gem_name, :newest, :installed, :requested
+    STATUS_PENDING    = 'pending'
+    STATUS_UPDATING   = 'updating'
+    STATUS_TESTING    = 'testing'
+    STATUS_UPDATED    = 'updated'
+    STATUS_UNCHANGED  = 'unchanged'
+    STATUS_TESTS_FAIL = 'tests_fail'
+
+    attr_reader :gem_name, :newest, :installed, :requested, :current_status
     def initialize(opts = {})
       @gem_name  = opts[:gem_name]
       @newest    = opts[:newest]
       @installed = opts[:installed]
       @requested = opts[:requested]
       @git_repo  = opts[:git_repo] || GitRepo.new
+      @current_status = STATUS_PENDING
     end
 
     def attempt_update(test_command = nil)
-      puts '-------------'
-      puts "OUTDATED GEM: #{@gem_name}"
-      puts "   Newest: #{@newest}. "
-      puts "Installed: #{@installed}."
-      puts "Running `bundle update #{@gem_name}`..."
-
+      @current_status = STATUS_UPDATING
       `bundle update #{@gem_name}`
 
       # sometimes the gem may be outdated, but it's matching the
@@ -26,16 +29,15 @@ module SafeUpdate
       end
 
       if test_command
-        puts "Running tests with: #{test_command}"
+        @current_status = STATUS_TESTING
         result = system(test_command)
         if result != true
-          puts "tests failed - this gem won't be updated (test result: #{$?.to_i})"
+          @current_status = STATUS_TESTS_FAIL
           @git_repo.discard_local_changes
           return
         end
       end
 
-      puts "committing changes (message: '#{commit_message}')..."
       @git_repo.commit_gemfile_lock(commit_message)
     end
 

@@ -10,6 +10,7 @@ require 'safe_update/updater'
 require 'safe_update/outdated_gem'
 require 'safe_update/bundle_outdated_parser'
 require 'safe_update/git_repo'
+require 'safe_update/presenter'
 
 module SafeUpdate
 end

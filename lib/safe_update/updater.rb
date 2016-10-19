@@ -15,6 +15,11 @@ module SafeUpdate
       push_interval = push.to_i if run_git_push
 
       puts 'Finding outdated gems...'
+      outdated_gems = BundleOutdatedParser.new.call
+
+      presenter = SafeUpdate::Presenter.new
+      Thread.new { presenter.call(outdated_gems) }
+
       outdated_gems.to_enum.with_index(1) do |outdated_gem, index|
         outdated_gem.attempt_update(test_command)
         @git_repo.push if run_git_push && index % push_interval == 0
@@ -23,19 +28,7 @@ module SafeUpdate
       # run it once at the very end, so the final commit can be tested in CI
       @git_repo.push if run_git_push
 
-      display_finished_message
-    end
-
-    private
-
-    def outdated_gems
-      BundleOutdatedParser.new.call
-    end
-
-    def display_finished_message
-      puts '-------------'
-      puts '-------------'
-      puts 'FINISHED'
+      presenter.stop
     end
   end
 end
