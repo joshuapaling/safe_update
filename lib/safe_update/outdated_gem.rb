@@ -46,6 +46,10 @@ module SafeUpdate
       end
     end
 
+    def being_operated_on_now?
+      [STATUS_UPDATING, STATUS_TESTING].include?(@current_status)
+    end
+
     private
 
     def commit_message

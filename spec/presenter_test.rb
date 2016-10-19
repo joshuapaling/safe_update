@@ -1,3 +1,5 @@
+# use this to test how the presenter will make things look.
+# run it with: `ruby ./spec/presenter_test.rb`
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'safe_update'
 

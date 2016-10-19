@@ -76,12 +76,14 @@ module SafeUpdate
     end
 
     def present_single_gem(outdated_gem)
+      status = outdated_gem.current_status
+      status += ' ' + current_spinner_state if outdated_gem.being_operated_on_now?
       return [
         fixed_length_string(outdated_gem.gem_name, 10),
         fixed_length_string(outdated_gem.installed, 10),
         fixed_length_string(outdated_gem.requested || '    -', 10),
         fixed_length_string(outdated_gem.newest, 7),
-        fixed_length_string(outdated_gem.current_status, 10)
+        fixed_length_string(status, 10)
       ].join(' | ')
     end
 
