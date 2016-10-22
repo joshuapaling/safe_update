@@ -2,6 +2,7 @@ require 'curses'
 
 module SafeUpdate
   class Presenter
+    include Curses
     # outdated_gems is an array of instances of SafeUpdate::OutdatedGem
 
     SPINNER_STATES = ['|', '/', '-', '\\']
@@ -9,6 +10,11 @@ module SafeUpdate
     def initialize
       Curses.noecho
       Curses.init_screen
+      Curses.start_color
+      Curses.init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK)
+      Curses.init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK)
+      Curses.init_pair(COLOR_GREEN, COLOR_GREEN, COLOR_BLACK)
+      Curses.init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK)
 
       @tick = 1
       @running = true
@@ -51,7 +57,14 @@ module SafeUpdate
       @outdated_gems.each_with_index do |outdated_gem, i|
         Curses.setpos(i + 2, 0)
         line = present_single_gem(outdated_gem)
-        Curses.addstr(line)
+        color = curses_color(outdated_gem)
+        if color
+          Curses.attron(color_pair(color)|A_NORMAL){
+            Curses.addstr(line)
+          }
+        else
+          Curses.addstr(line)
+        end
         Curses.refresh
       end
     end
@@ -90,6 +103,24 @@ module SafeUpdate
     # inspired by http://stackoverflow.com/questions/14714936/fix-ruby-string-to-n-characters
     def fixed_length_string(str, length)
       "%-#{length}.#{length}s" % str
+    end
+
+    def curses_color(outdated_gem)
+      case outdated_gem.current_status
+      when OutdatedGem::STATUS_TESTS_FAIL
+        return COLOR_RED
+      when OutdatedGem::STATUS_UPDATING,
+           OutdatedGem::STATUS_TESTING
+        return COLOR_YELLOW
+      when OutdatedGem::STATUS_UPDATED
+        return COLOR_GREEN
+      when OutdatedGem::STATUS_UNCHANGED
+        return COLOR_BLUE
+      when OutdatedGem::STATUS_PENDING
+        return nil # render in default color
+      else
+        return nil
+      end
     end
   end
 end
