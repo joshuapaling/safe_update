@@ -1,4 +1,5 @@
 require 'curses'
+require 'colorize'
 
 module SafeUpdate
   class Presenter
@@ -41,7 +42,13 @@ module SafeUpdate
       puts title
       puts header
       @outdated_gems.each do |outdated_gem|
-        puts present_single_gem(outdated_gem)
+        line = present_single_gem(outdated_gem)
+        color = colorize_color(outdated_gem)
+        if color
+          puts line.send(color)
+        else
+          puts line
+        end
       end
     end
 
@@ -70,7 +77,7 @@ module SafeUpdate
     end
 
     def title
-      '=> Updating your gems... safely   ' + current_spinner_state
+      'Updating your gems... Safely'
     end
 
     def current_spinner_state
@@ -116,6 +123,24 @@ module SafeUpdate
         return COLOR_GREEN
       when OutdatedGem::STATUS_UNCHANGED
         return COLOR_BLUE
+      when OutdatedGem::STATUS_PENDING
+        return nil # render in default color
+      else
+        return nil
+      end
+    end
+
+    def colorize_color(outdated_gem)
+      case outdated_gem.current_status
+      when OutdatedGem::STATUS_TESTS_FAIL
+        return :red
+      when OutdatedGem::STATUS_UPDATING,
+           OutdatedGem::STATUS_TESTING
+        return :yellow
+      when OutdatedGem::STATUS_UPDATED
+        return :green
+      when OutdatedGem::STATUS_UNCHANGED
+        return :blue
       when OutdatedGem::STATUS_PENDING
         return nil # render in default color
       else
