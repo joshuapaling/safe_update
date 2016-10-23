@@ -27,24 +27,7 @@ Since this gem is not a dependency of your application, per se, there's no need 
 2. `safe_update`
 3. Watch your gems get updated and committed, one at a time. The output looks like this:
 
-```
-(... more goes here)
--------------
-OUTDATED GEM: sprockets-rails
-   Newest: 3.0.3.
-Installed: 3.0.0.
-Running `bundle update sprockets-rails`...
-committing changes (message: 'bundle update sprockets-rails')...
--------------
-OUTDATED GEM: uniform_notifier
-   Newest: 1.10.0.
-Installed: 1.9.0.
-Running `bundle update uniform_notifier`...
-committing changes (message: 'bundle update uniform_notifier')...
--------------
--------------
-FINISHED
-```
+![screenshot](./screenshot.png)
 
 ### Options
 
@@ -77,9 +60,8 @@ git checkout master && git merge run-safe_update && git branch -d run-safe_updat
 
 ## Future
 
-I've knocked this up really quickly, and it's pretty MVP-ish. Ideas for future include:
+Ideas for future include:
 
-- run your tests each update, and don't update problem gems.
 - specify what update sizes you want to apply (major, minor, patch); for now you need to rely on the [Gemfile version specifiers](http://bundler.io/gemfile.html).
 - summary of what's happened at the end (eg. 2 major updates ignored, 5 minor updates applied, etc).
 - other ideas? Open an issue.
