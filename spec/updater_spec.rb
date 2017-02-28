@@ -22,8 +22,8 @@ describe SafeUpdate::Updater do
     # but I'm not sure what alternative approach there is, given
     # all the methods run a bunch of shell commands that we don't
     # want to run in the tests themselves.
-    SafeUpdate::OutdatedGem.any_instance.stub(:initialize).and_return(true)
-    SafeUpdate::OutdatedGem.any_instance.stub(:attempt_update).and_return(true)
+    allow_any_instance_of(SafeUpdate::OutdatedGem).to receive(:initialize).and_return(true)
+    allow_any_instance_of(SafeUpdate::OutdatedGem).to receive(:attempt_update).and_return(true)
 
     allow(updater).to receive(:get_outdated_gems).and_return([
       SafeUpdate::OutdatedGem.new(name: '1'),
